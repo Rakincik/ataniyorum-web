@@ -1,0 +1,42 @@
+.footer {
+  background-color: #f1f5f9;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+  width: 100%;
+}
+
+.trustBadges {
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.link {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--primary-color);
+}
+
+.bottomBar {
+  background-color: #e2e8f0;
+  padding: 24px 0;
+}
+
+.socialLink {
+  color: var(--text-light);
+  font-size: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+  color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.payments {
+  display: flex;
+  align-items: center;
+}

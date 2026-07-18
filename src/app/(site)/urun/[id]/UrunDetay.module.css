@@ -1,0 +1,56 @@
+.imageCard {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  overflow: hidden;
+}
+
+.productImg {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.imageCard:hover .productImg {
+  transform: scale(1.08);
+}
+
+.discountBadge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #dc3545;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+}
+
+.priceBox {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+}
+
+.oldPrice {
+  text-decoration: line-through;
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.newPrice {
+  color: var(--success-color);
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 800;
+}

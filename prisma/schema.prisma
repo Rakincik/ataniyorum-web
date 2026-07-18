@@ -1,0 +1,107 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // Hashed password
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String     // Plain-text password (as requested by user for testing)
+  name      String
+  surname   String
+  tc        String?
+  phone     String?
+  birthDate String?
+  createdAt DateTime   @default(now())
+  purchases Purchase[]
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String
+  parentId  Int?
+  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Category[] @relation("CategoryHierarchy")
+  products  Product[]
+  createdAt DateTime   @default(now())
+}
+
+model Product {
+  id             Int        @id @default(autoincrement())
+  title          String
+  categoryId     Int?
+  category       Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  price          Float
+  discountRate   Int        @default(0) // percentage
+  imageUrl       String
+  description    String     @db.Text
+  isActive       Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  purchases      Purchase[]
+  instructorName String?
+  badges         String?
+  sortOrder      Int        @default(0)
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String   @db.Text
+  date      DateTime @default(now())
+  isActive  Boolean  @default(true)
+}
+
+model Setting {
+  id                Int      @id @default(1)
+  countdownTitle    String   @default("ÖABT Sınavı")
+  countdownDate     DateTime
+  whatsappNumber    String?
+  instagramUrl      String?
+  contactEmail      String?
+  purchaseVideoUrl  String?
+  couponVideoUrl    String?
+  countdownActive   Boolean  @default(true)
+  sliderActive      Boolean  @default(true)
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  surname   String
+  email     String
+  phone     String
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id            Int       @id @default(autoincrement())
+  code          String    @unique
+  discountType  String    // "PERCENTAGE" or "AMOUNT"
+  discountValue Float
+  expireDate    DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  pricePaid Float
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,191 @@
+.header {
+  position: relative;
+  z-index: 1000;
+  width: 100%;
+}
+
+.topCountdown {
+  background-color: var(--primary-color);
+  border-bottom: 2px solid var(--accent-color);
+  font-size: 0.95rem;
+}
+
+.countdownTitle {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--accent-color);
+}
+
+.timerGrid {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.timerItem {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  min-width: 60px;
+  justify-content: center;
+}
+
+.timerNumber {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.timerLabel {
+  font-size: 0.7rem;
+  color: #cbd5e1;
+  text-transform: uppercase;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.logo {
+  cursor: pointer;
+}
+
+.trophyIcon {
+  color: var(--primary-color);
+  transition: transform 0.3s ease;
+}
+
+.logo:hover .trophyIcon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.logoTextMain {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.logoTextSub {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #dc3545;
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.searchForm {
+  width: 100%;
+  max-width: 380px;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  font-size: 1.45rem;
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.iconBtn:hover {
+  background-color: var(--bg-light);
+  color: var(--primary-light);
+}
+
+.cartBtn {
+  color: var(--primary-color);
+}
+
+.cartBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #dc3545;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+/* Sidebar Cart Drawer */
+.cartOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+.cartDrawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 400px;
+  background-color: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  z-index: 1060;
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cartItemImg {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  padding: 2px;
+}
+
+.cartItems {
+  max-height: calc(100vh - 220px);
+}
+
+@media (max-width: 768px) {
+  .searchForm {
+    max-width: 100%;
+    order: 4;
+  }
+}
