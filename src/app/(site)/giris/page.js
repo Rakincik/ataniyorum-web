@@ -37,7 +37,7 @@ export default function GirisPage() {
       router.refresh();
     } catch (err) {
       // If it fails, simulate standard student account check (redirect to LMS)
-      if (formData.email.includes('@') && formData.password.length >= 4) {
+      if (formData.email !== 'admin@ataniyorum.com' && formData.email.includes('@') && formData.password.length >= 4) {
         setError('Öğrenci hesabınız sistemde doğrulandı, ancak uzaktan eğitim portalına yönlendiriliyorsunuz...');
         setTimeout(() => {
           window.location.href = 'https://ataniyorumhocam.okinar.com';
