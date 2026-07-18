@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db-push": "prisma db push",
+    "db-seed": "node prisma/seed.js",
     "generate": "prisma generate",
     "test-db": "node test-db.js"
   },
