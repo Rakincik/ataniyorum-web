@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String      @id @default(cuid())
+  firstName String
+  lastName  String
+  tcNo      String?     @unique
+  phone     String?
+  email     String      @unique
+  password  String      // PLAIN TEXT as requested!
+  address   String?
+  role      String      @default("STUDENT") // STUDENT or ADMIN
+  orders    Order[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?   // Ana sayfa kartları için görsel
+  color       String?   // Ana sayfa kart konsept rengi
+  isFeatured  Boolean   @default(false)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id            String           @id @default(cuid())
+  title         String
+  slug          String           @unique
+  description   String
+  content       String?          // Rich Text HTML content
+  image         String?          // Legacy/Main image
+  basePrice     Float            @default(0)
+  promoVideoUrl String?
+  categoryId    String
+  category      Category         @relation(fields: [categoryId], references: [id])
+  variants      ProductVariant[]
+  addons        ProductAddon[]
+  features      ProductFeature[]
+  images        ProductImage[]   // Multiple images gallery
+  coupons       Coupon[]
+
+  // Cross Sell Relations
+  crossSellFrom ProductCrossSell[] @relation("ProductCrossSellMain")
+  crossSellTo   ProductCrossSell[] @relation("ProductCrossSellTarget")
+
+  isActive      Boolean          @default(true)  // Yayında / Pasif
+  isStockOut    Boolean          @default(false) // Kontenjan Doldu / Stok Tükendi
+  isFree        Boolean          @default(false) // Ücretsiz Ders Paketi (0 TL)
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model ProductCrossSell {
+  id              String   @id @default(cuid())
+  productId       String
+  product         Product  @relation("ProductCrossSellMain", fields: [productId], references: [id], onDelete: Cascade)
+  targetProductId String
+  targetProduct   Product  @relation("ProductCrossSellTarget", fields: [targetProductId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@unique([productId, targetProductId])
+}
+
+model ProductFeature {
+  id         String   @id @default(cuid())
+  name       String
+  order      Int      @default(0)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ProductImage {
+  id         String   @id @default(cuid())
+  url        String
+  order      Int      @default(0)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ProductAddon {
+  id         String      @id @default(cuid())
+  name       String      
+  price      Float       
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model ProductVariant {
+  id         String      @id @default(cuid())
+  name       String      // e.g. "Online Katılım"
+  price      Float       // Price delta from basePrice (e.g. 0, 500, 1000)
+  stock      Int?        // Optional, if null = unlimited
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  shopierOrderId  String?     @unique
+  totalAmount     Float
+  couponCode      String?
+  discountAmount  Float?      @default(0)
+  status          String      @default("PENDING") // PENDING, PAID, FAILED
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id         String         @id @default(cuid())
+  orderId    String
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId  String
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+  addonId    String?
+  addonName  String?        // Store name at time of purchase
+  addonPrice Float?         // Store price at time of purchase
+  price      Float          // Total price (basePrice + variant price delta) at time of purchase
+  quantity   Int            @default(1)
+}
+
+model Coupon {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  type            String    // "PERCENTAGE" or "FIXED"
+  value           Float     // e.g. 20 (for 20%) or 100 (for 100 TL)
+  minCartValue    Float?    // Minimum cart total to apply
+  usageLimit      Int?      // How many times can it be used in total
+  usedCount       Int       @default(0)
+  productId       String?
+  product         Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  expiresAt       DateTime?
+  
+  // Influencer / Affiliate Tracking
+  influencerName  String?   // e.g. "Murat Hoca (YouTube)"
+  commissionType  String?   // "PERCENTAGE" or "FIXED"
+  commissionValue Float?   // e.g. 10 for 10% or 50 for 50 TL per sale
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Slider {
+  id         String   @id @default(cuid())
+  image      String
+  title      String
+  subtitle   String?
+  buttonText String?
+  buttonLink String?
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Feature {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String   // e.g. "Brain", "Target", "Users"
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Stat {
+  id        String   @id @default(cuid())
+  value     String   // e.g. "10.000+"
+  label     String   // e.g. "Öğrenci"
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Instructor {
+  id          String   @id @default(cuid())
+  name        String
+  subject     String
+  quote       String?
+  description String?
+  image       String
+  color       String   @default("bg-blue-500")
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Announcement {
+  id         String   @id @default(cuid())
+  text       String
+  linkText   String?  // e.g. "Daha fazla bilgi"
+  linkUrl    String?  // e.g. "/#courses"
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model AboutPage {
+  id           String   @id @default("default")
+  badgeText    String   @default("2026 Sezonu Başlıyor")
+  title        String   @default("Geleceğinize Açılan Kapı: Atanıyorum Hocam")
+  subtitle     String   @default("Türkiye'nin en seçkin öğretmen kadrosu ve yeni nesil eğitim teknolojileriyle, hayalinizdeki kadroya yerleşmeniz için yanınızdayız.")
+  
+  // Hero Stats
+  stat1Value   String   @default("10+")
+  stat1Label   String   @default("Uzman Eğitmen")
+  stat2Value   String   @default("500+")
+  stat2Label   String   @default("Saat Video")
+  stat3Value   String   @default("%95")
+  stat3Label   String   @default("Memnuniyet")
+  stat4Value   String   @default("7/24")
+  stat4Label   String   @default("Rehberlik")
+
+  // Founder
+  founderName  String   @default("Türker Tola")
+  founderTitle String   @default("Kurucu & Eğitim Koordinatörü")
+  founderQuote String   @default("Eğitimde fırsat eşitliği ve kaliteli içerik, her öğretmenin hakkıdır. Atanıyorum Hocam platformunu kurarken tek bir hayalimiz vardı: Türkiye'nin dört bir yanındaki meslektaşlarımızı en iyi şartlarda sınavlara hazırlamak ve atanma sevincini hep birlikte yaşamak.")
+  founderImage String?
+
+  // Mission & Vision Cards
+  missionTitle String   @default("Misyonumuz")
+  missionDesc  String   @default("En güncel müfredata uygun, nokta atışı bilgilerle adayları doğrudan başarıya odaklamak.")
+  visionTitle  String   @default("Vizyonumuz")
+  visionDesc   String   @default("ÖABT ve Eğitim Bilimleri alanında Türkiye'nin tartışmasız en çok kazandıran dijital akademisi olmak.")
+
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSettings {
+  id               String   @id @default("default")
+  isMaintenance    Boolean  @default(false)
+  maintenanceImage String?
+  maintenanceTitle String?  @default("Sistemimizde Bakım Yapılmaktadır")
+  maintenanceDesc  String?  @default("Sizlere daha iyi hizmet verebilmek için altyapı çalışması yürütüyoruz. Kısa süre içerisinde tekrar yayında olacağız.")
+  updatedAt        DateTime @updatedAt
+}

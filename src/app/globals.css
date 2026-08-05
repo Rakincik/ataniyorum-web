@@ -1,26 +1,107 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
+@plugin "@tailwindcss/typography";
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary-50: #f0f4f8;
+  --color-primary-100: #d9e2ec;
+  --color-primary-500: #243b53;
+  --color-primary-600: #102a43; /* Koyu Lacivert/Mavi - Logo Tonu */
+  --color-primary-700: #0a1f33;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --shadow-apple: 0 4px 24px rgba(0, 0, 0, 0.04);
+  --shadow-apple-hover: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Zengin Metin (Prose) Özel Tik (Checkmark) Stili */
+.prose ul {
+  list-style: none !important;
+  padding-left: 0 !important;
+}
+.prose ul li {
+  position: relative;
+  padding-left: 2rem !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1.6;
+}
+.prose ul li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-primary-600);
+  font-weight: 900;
+  font-size: 1.1rem;
+  background-color: var(--color-primary-50);
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+/* Vurucu Başlık Stili */
+.prose h2 {
+  font-size: 2rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.025em;
+  color: var(--color-primary-700) !important;
+  margin-bottom: 1.5rem !important;
+  position: relative;
+  display: inline-block;
+}
+.prose h2::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 3rem;
+  height: 0.25rem;
+  background-color: var(--color-primary-500);
+  border-radius: 9999px;
+}
+.prose, .prose p, .prose li, .prose strong, .prose em, .prose b, .prose i {
+  color: var(--foreground) !important;
+  opacity: 0.9;
+}
+.prose strong, .prose b {
+  font-weight: 700 !important;
+  color: var(--color-primary-700) !important;
+}
+.prose em, .prose i {
+  font-style: italic !important;
+}
+
+:root {
+  --background: #fbfbfd; /* Apple-like light gray */
+  --foreground: #1d1d1f;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Utility to remove scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
