@@ -35,15 +35,16 @@ function LoginContent() {
         setError("Girdiğiniz e-posta adresi veya şifre hatalı.");
         setIsLoading(false);
       } else {
-        const session = await getSession();
-        if (redirectUrl) {
-          router.push(redirectUrl);
-        } else if (session?.user?.role === "ADMIN") {
-          router.push("/admin");
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
+        
+        if (session?.user?.role === "ADMIN") {
+          window.location.href = "/admin";
+        } else if (redirectUrl) {
+          window.location.href = redirectUrl;
         } else {
-          router.push("/");
+          window.location.href = "/";
         }
-        router.refresh();
       }
     } catch (error) {
       setError("Bir hata oluştu. Lütfen tekrar deneyin.");
