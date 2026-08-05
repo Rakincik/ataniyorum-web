@@ -1,15 +1,19 @@
 import { PrismaClient } from '../generated/prisma/client';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 
+console.log("Initializing Prisma...", { 
+  dbUrl: process.env.DATABASE_URL,
+  nextAuthUrl: process.env.NEXTAUTH_URL 
+});
+
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-function createPrismaClient(): PrismaClient {
-  const adapter = new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL || "file:./dev.db",
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    adapter: new PrismaBetterSqlite3({
+      url: process.env.DATABASE_URL || "file:./dev.db",
+    }),
   });
-  return new PrismaClient({ adapter });
-}
-
-export const prisma = globalForPrisma.prisma || createPrismaClient();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
