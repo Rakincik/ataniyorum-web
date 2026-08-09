@@ -10,7 +10,7 @@ import type { Category } from "@/generated/prisma/client";
 import { useCart } from "@/context/CartContext";
 import { useSession, signOut } from "next-auth/react";
 
-export default function NavbarClient({ categories }: { categories: Category[] }) {
+export default function NavbarClient({ categories, logo }: { categories: Category[]; logo?: string | null }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -51,10 +51,11 @@ export default function NavbarClient({ categories }: { categories: Category[] })
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-white p-1 shadow-sm">
               <Image 
-                src="/logo.png" 
+                src={logo || "/logo.png"} 
                 alt="Atanıyorum Hocam Logo" 
                 fill
                 className="object-contain group-hover:scale-105 transition-transform"
+                unoptimized
               />
             </div>
             <span className="font-bold text-lg tracking-tight text-white">

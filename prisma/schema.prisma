@@ -267,5 +267,8 @@ model SiteSettings {
   maintenanceTitle  String?  @default("Sistemimizde Bakım Yapılmaktadır")
   maintenanceDesc   String?  @default("Sizlere daha iyi hizmet verebilmek için altyapı çalışması yürütüyoruz. Kısa süre içerisinde tekrar yayında olacağız.")
   sliderAspectRatio String   @default("16:9")  // "16:9", "21:9", "boxed"
+  logo              String?
+  favicon           String?
+  siteTitle         String?  @default("Atanıyorum Hocam")
   updatedAt         DateTime @updatedAt
 }

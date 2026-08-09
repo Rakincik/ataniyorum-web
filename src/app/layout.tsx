@@ -12,10 +12,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Atanıyorum Hocam | KPSS ÖABT Eğitimleri",
-  description: "Türkiye'nin en kaliteli KPSS ÖABT online eğitim platformu.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const title = settings?.siteTitle || "Atanıyorum Hocam";
+  const favicon = settings?.favicon || "/favicon.ico";
+
+  return {
+    title: `${title} | KPSS ÖABT Eğitimleri`,
+    description: "Türkiye'nin en kaliteli KPSS ÖABT online eğitim platformu.",
+    icons: {
+      icon: favicon,
+      shortcut: favicon,
+      apple: favicon,
+    }
+  };
+}
 
 import Providers from "@/providers/Providers";
 import MaintenanceGuard from "@/components/MaintenanceGuard";

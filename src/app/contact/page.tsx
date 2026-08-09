@@ -1,15 +1,10 @@
-import NavbarClient from "@/components/NavbarClient";
+import Navbar from "@/components/Navbar";
 import { Mail, Phone, MapPin, Send, Camera, MessageCircle, PlayCircle } from "lucide-react";
-import { prisma } from "@/lib/prisma";
 
 export default async function ContactPage() {
-  const categories = await prisma.category.findMany({
-    orderBy: { name: "asc" }
-  });
-
   return (
     <main className="min-h-screen bg-background text-foreground pb-20">
-      <NavbarClient categories={categories} />
+      <Navbar />
       
       {/* Hero Section */}
       <div className="bg-[#102a43] text-white pt-32 pb-20 px-6 relative overflow-hidden">

@@ -23,6 +23,9 @@ export async function PUT(req: Request) {
         maintenanceTitle: data.maintenanceTitle || "Sistemimizde Bakım Yapılmaktadır",
         maintenanceDesc: data.maintenanceDesc || "",
         sliderAspectRatio: data.sliderAspectRatio || "16:9",
+        logo: data.logo || null,
+        favicon: data.favicon || null,
+        siteTitle: data.siteTitle || "Atanıyorum Hocam",
       },
       create: {
         id: "default",
@@ -31,6 +34,9 @@ export async function PUT(req: Request) {
         maintenanceTitle: data.maintenanceTitle || "Sistemimizde Bakım Yapılmaktadır",
         maintenanceDesc: data.maintenanceDesc || "",
         sliderAspectRatio: data.sliderAspectRatio || "16:9",
+        logo: data.logo || null,
+        favicon: data.favicon || null,
+        siteTitle: data.siteTitle || "Atanıyorum Hocam",
       }
     });
 

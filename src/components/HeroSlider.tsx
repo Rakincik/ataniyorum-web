@@ -92,6 +92,7 @@ export default function HeroSlider({
                 transform: `scale(${(currentSlider.imageZoom || 100) / 100})`
               }}
               priority
+              unoptimized
             />
             {/* Subtle gradient overlay for better text readability */}
             {showTextOverlay && (

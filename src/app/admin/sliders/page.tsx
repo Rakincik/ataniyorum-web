@@ -204,7 +204,7 @@ export default function AdminSliderClient() {
                   <div className="flex items-center gap-4">
                     {formData.image && (
                       <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-gray-200">
-                        <Image src={formData.image} alt="Preview" fill className="object-cover" />
+                        <Image src={formData.image} alt="Preview" fill className="object-cover" unoptimized />
                       </div>
                     )}
                     <label className="flex-1 cursor-pointer border-2 border-dashed border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
@@ -496,7 +496,7 @@ export default function AdminSliderClient() {
                 <tr key={slider.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="p-4">
                     <div className="relative w-24 h-12 rounded-md overflow-hidden bg-gray-100">
-                      <Image src={slider.image} alt={slider.title} fill className="object-cover" />
+                      <Image src={slider.image} alt={slider.title} fill className="object-cover" unoptimized />
                     </div>
                   </td>
                   <td className="p-4">

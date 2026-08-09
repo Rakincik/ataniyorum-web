@@ -15,12 +15,15 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
   const [maintenanceTitle, setMaintenanceTitle] = useState<string>(initialSettings.maintenanceTitle || "Sistemimizde Bakım Yapılmaktadır");
   const [maintenanceDesc, setMaintenanceDesc] = useState<string>(initialSettings.maintenanceDesc || "Sizlere daha iyi bir deneyim sunmak için altyapı güncellemesi yürütüyoruz. Kısa süre içinde tekrar yayında olacağız.");
   const [sliderAspectRatio, setSliderAspectRatio] = useState<string>(initialSettings.sliderAspectRatio || "16:9");
+  const [logo, setLogo] = useState<string>(initialSettings.logo || "");
+  const [favicon, setFavicon] = useState<string>(initialSettings.favicon || "");
+  const [siteTitle, setSiteTitle] = useState<string>(initialSettings.siteTitle || "Atanıyorum Hocam");
 
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, target: "maintenance" | "logo" | "favicon") => {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
     const formData = new FormData();
@@ -31,8 +34,16 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (res.ok && data.url) {
-        setMaintenanceImage(data.url);
-        showToast("Bakım modu afişi yüklendi.", "success");
+        if (target === "maintenance") {
+          setMaintenanceImage(data.url);
+          showToast("Bakım modu afişi yüklendi.", "success");
+        } else if (target === "logo") {
+          setLogo(data.url);
+          showToast("Site logosu yüklendi.", "success");
+        } else if (target === "favicon") {
+          setFavicon(data.url);
+          showToast("Favicon yüklendi.", "success");
+        }
       } else {
         showToast(data.error || "Görsel yüklenemedi.", "error");
       }
@@ -56,7 +67,10 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
           maintenanceImage,
           maintenanceTitle,
           maintenanceDesc,
-          sliderAspectRatio
+          sliderAspectRatio,
+          logo,
+          favicon,
+          siteTitle
         })
       });
 
@@ -155,6 +169,99 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
       {/* Settings Form */}
       <form onSubmit={handleSave} className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm space-y-6">
         <h3 className="font-extrabold text-base text-gray-900 border-b pb-3 flex items-center gap-2">
+          <Settings className="w-5 h-5 text-primary-600" />
+          Temel Site Ayarları
+        </h3>
+
+        {/* Site Title */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+            Site Başlığı (Tarayıcı Sekme Yazısı)
+          </label>
+          <input
+            type="text"
+            value={siteTitle}
+            onChange={(e) => setSiteTitle(e.target.value)}
+            placeholder="Örn: Atanıyorum Hocam"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold text-gray-900 outline-none focus:border-primary-600"
+          />
+          <p className="text-xs text-gray-400">
+            Tarayıcı sekmesinde ve arama motorlarında sitenizin başlığı olarak gösterilir.
+          </p>
+        </div>
+
+        {/* Logo and Favicon Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Logo Upload */}
+          <div className="space-y-2">
+            <div>
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                Site Logosu
+              </label>
+              <p className="text-xs text-gray-400 mt-0.5">Sitenin sol üst köşesinde ve e-postalarda gösterilecek ana logo.</p>
+            </div>
+            <div className="flex items-center gap-4 pt-2">
+              {logo ? (
+                <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-200 flex-shrink-0 shadow-sm group bg-black/5">
+                  <img src={logo} alt="Logo" className="w-full h-full object-contain p-2" />
+                  <button
+                    type="button"
+                    onClick={() => setLogo("")}
+                    className="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    title="Görseli Kaldır"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-24 h-24 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 flex-shrink-0">
+                  <span className="text-xs font-medium">Yüklenmedi</span>
+                </div>
+              )}
+              <label className="flex-1 cursor-pointer border-2 border-dashed border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-primary-300 transition-all">
+                <UploadCloud className="w-6 h-6 mb-1 text-primary-500" />
+                <span className="text-xs font-bold text-gray-700">Logo Yükle</span>
+                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, "logo")} className="hidden" disabled={isUploading} />
+              </label>
+            </div>
+          </div>
+
+          {/* Favicon Upload */}
+          <div className="space-y-2">
+            <div>
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                Site Favicon (Sekme İkonu)
+              </label>
+              <p className="text-xs text-gray-400 mt-0.5">Tarayıcı sekmesinde site başlığının solunda gösterilecek küçük ikon.</p>
+            </div>
+            <div className="flex items-center gap-4 pt-2">
+              {favicon ? (
+                <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-200 flex-shrink-0 shadow-sm group bg-black/5">
+                  <img src={favicon} alt="Favicon" className="w-full h-full object-contain p-4" />
+                  <button
+                    type="button"
+                    onClick={() => setFavicon("")}
+                    className="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    title="Görseli Kaldır"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-24 h-24 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 flex-shrink-0">
+                  <span className="text-xs font-medium">Yüklenmedi</span>
+                </div>
+              )}
+              <label className="flex-1 cursor-pointer border-2 border-dashed border-gray-200 rounded-2xl p-4 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-primary-300 transition-all">
+                <UploadCloud className="w-6 h-6 mb-1 text-primary-500" />
+                <span className="text-xs font-bold text-gray-700">Favicon Yükle</span>
+                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, "favicon")} className="hidden" disabled={isUploading} />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <h3 className="font-extrabold text-base text-gray-900 border-b pb-3 flex items-center gap-2 pt-4">
           <Wrench className="w-5 h-5 text-primary-600" />
           Bakım Ekranı Özelleştirme
         </h3>
@@ -195,7 +302,7 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
                 {isUploading ? "Görsel Yükleniyor..." : "Bakım Görseli Yükle (Tıklayın)"}
               </span>
               <span className="text-xs text-gray-400 mt-1">Önerilen: 1920x1080 yatay görsel (PNG, JPG, WEBP)</span>
-              <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={isUploading} />
+              <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, "maintenance")} className="hidden" disabled={isUploading} />
             </label>
           </div>
         </div>
