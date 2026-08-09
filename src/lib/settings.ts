@@ -18,6 +18,18 @@ export async function getSiteSettings() {
       }
     }
 
+    if (!settings) {
+      return {
+        id: "default",
+        isMaintenance: false,
+        maintenanceImage: null,
+        maintenanceTitle: "Sistemimizde Bakım Yapılmaktadır",
+        maintenanceDesc: "Sizlere daha iyi hizmet verebilmek için altyapı çalışması yürütüyoruz. Kısa süre içerisinde tekrar yayında olacağız.",
+        sliderAspectRatio: "16:9",
+        updatedAt: new Date()
+      };
+    }
+
     return settings;
   } catch (error) {
     console.error("Error fetching site settings:", error);
