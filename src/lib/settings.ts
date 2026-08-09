@@ -2,14 +2,20 @@ import { prisma } from "@/lib/prisma";
 
 export async function getSiteSettings() {
   try {
-    let settings = await prisma.siteSettings.findUnique({
-      where: { id: "default" }
-    });
+    let settings = await prisma.siteSettings.findFirst();
 
     if (!settings) {
-      settings = await prisma.siteSettings.create({
-        data: { id: "default" }
-      });
+      try {
+        settings = await prisma.siteSettings.create({
+          data: { id: "default" }
+        });
+      } catch (createError: any) {
+        if (createError.code === "P2002") {
+          settings = await prisma.siteSettings.findFirst();
+        } else {
+          throw createError;
+        }
+      }
     }
 
     return settings;
