@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const title = settings?.siteTitle || "Atanıyorum Hocam";
-  const favicon = settings?.favicon || "/favicon.ico";
+  const favicon = settings?.favicon || "/favicon.png";
 
   return {
     title: `${title} | KPSS ÖABT Eğitimleri`,
