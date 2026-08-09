@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/context/ToastContext";
-import { Settings, ShieldAlert, Save, UploadCloud, Trash2, Eye, Wrench, CheckCircle2, AlertTriangle, Sparkles } from "lucide-react";
+import { Settings, ShieldAlert, Save, UploadCloud, Trash2, Eye, Wrench, CheckCircle2, AlertTriangle, Sparkles, Image as ImageIcon } from "lucide-react";
 import MaintenanceView from "@/components/MaintenanceView";
 
 export default function AdminSettingsClient({ initialSettings }: { initialSettings: any }) {
@@ -14,6 +14,7 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
   const [maintenanceImage, setMaintenanceImage] = useState<string>(initialSettings.maintenanceImage || "");
   const [maintenanceTitle, setMaintenanceTitle] = useState<string>(initialSettings.maintenanceTitle || "Sistemimizde Bakım Yapılmaktadır");
   const [maintenanceDesc, setMaintenanceDesc] = useState<string>(initialSettings.maintenanceDesc || "Sizlere daha iyi bir deneyim sunmak için altyapı güncellemesi yürütüyoruz. Kısa süre içinde tekrar yayında olacağız.");
+  const [sliderAspectRatio, setSliderAspectRatio] = useState<string>(initialSettings.sliderAspectRatio || "16:9");
 
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -54,7 +55,8 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
           isMaintenance,
           maintenanceImage,
           maintenanceTitle,
-          maintenanceDesc
+          maintenanceDesc,
+          sliderAspectRatio
         })
       });
 
@@ -224,6 +226,30 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
             placeholder="Örn: Sizlere daha iyi hizmet verebilmek için güncellemeler yapıyoruz."
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-medium text-gray-900 outline-none focus:border-primary-600"
           />
+        </div>
+
+        <h3 className="font-extrabold text-base text-gray-900 border-b pb-3 flex items-center gap-2 pt-6">
+          <ImageIcon className="w-5 h-5 text-primary-600" />
+          Ana Sayfa Slider Özelleştirme
+        </h3>
+
+        {/* Aspect Ratio Selector */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+            Slider En-Boy Oranı & Düzeni
+          </label>
+          <select
+            value={sliderAspectRatio}
+            onChange={(e) => setSliderAspectRatio(e.target.value)}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold text-gray-900 outline-none focus:border-primary-600"
+          >
+            <option value="16:9">Tam Ekran (16:9 Standardı - Kırpılmasız Afişler İçin)</option>
+            <option value="21:9">Sinematik Banner (21:9 İnce Şerit)</option>
+            <option value="boxed">Kutulu Tasarım (Kenarları Boş, Yuvarlatılmış Köşeli)</option>
+          </select>
+          <p className="text-xs text-gray-400">
+            * Seçilen oran tüm ana sayfa slider alanında anında uygulanır. Tam ekran formatları yanlarda boşluk bırakmaz.
+          </p>
         </div>
 
         {/* Action Buttons */}

@@ -28,7 +28,7 @@ export default function TeamListClient({ instructors }: { instructors: any[] }) 
           >
             {/* Image Side (Reasonable size, not huge) */}
             <div className="w-full md:w-1/2 flex justify-center">
-              <div className="relative w-full max-w-[400px] aspect-[4/5] rounded-[32px] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] group">
+              <div className="relative w-full max-w-[400px] aspect-square rounded-[32px] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] group">
                 {member.image && (
                   <Image
                     src={member.image}

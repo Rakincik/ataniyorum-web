@@ -21,6 +21,7 @@ export async function getSiteSettings() {
       maintenanceImage: null,
       maintenanceTitle: "Sistemimizde Bakım Yapılmaktadır",
       maintenanceDesc: "Sizlere daha iyi hizmet verebilmek için altyapı çalışması yürütüyoruz. Kısa süre içerisinde tekrar yayında olacağız.",
+      sliderAspectRatio: "16:9",
       updatedAt: new Date()
     };
   }

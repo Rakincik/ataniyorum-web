@@ -145,12 +145,20 @@ export default function NavbarClient({ categories }: { categories: Category[] })
 
             {session ? (
               <div className="flex items-center gap-3">
+                {session.user?.role === "ADMIN" && (
+                  <Link 
+                    href="/admin" 
+                    className="px-4 py-1.5 bg-primary-500 hover:bg-primary-600 text-white text-xs font-black rounded-full transition-all shadow-md hover:shadow-lg border border-primary-400 cursor-pointer"
+                  >
+                    Yönetim Paneli
+                  </Link>
+                )}
                 <span className="text-xs font-bold text-white hidden sm:inline-block bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
                   👋 {session.user?.name || "Öğrenci"}
                 </span>
                 <button 
                   onClick={() => signOut()} 
-                  className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-200 text-xs font-bold rounded-full transition-colors"
+                  className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-200 text-xs font-bold rounded-full transition-colors cursor-pointer"
                 >
                   Çıkış
                 </button>

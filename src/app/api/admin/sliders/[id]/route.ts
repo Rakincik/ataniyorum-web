@@ -16,6 +16,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         buttonLink: body.buttonLink,
         order: body.order ? Number(body.order) : undefined,
         isActive: body.isActive,
+        textAlignment: body.textAlignment,
+        textPosition: body.textPosition,
+        buttonStyle: body.buttonStyle,
+        imageFit: body.imageFit,
+        imageZoom: body.imageZoom ? Number(body.imageZoom) : undefined,
+        imagePosition: body.imagePosition,
       },
     });
 

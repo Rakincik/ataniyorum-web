@@ -9,6 +9,7 @@ export async function GET() {
       maintenanceImage: settings.maintenanceImage,
       maintenanceTitle: settings.maintenanceTitle,
       maintenanceDesc: settings.maintenanceDesc,
+      sliderAspectRatio: settings.sliderAspectRatio || "16:9",
     });
   } catch (error) {
     return NextResponse.json({
@@ -16,6 +17,7 @@ export async function GET() {
       maintenanceImage: null,
       maintenanceTitle: null,
       maintenanceDesc: null,
+      sliderAspectRatio: "16:9",
     });
   }
 }

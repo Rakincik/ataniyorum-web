@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import HeroSlider from "@/components/HeroSlider";
 import Link from "next/link";
 import { ArrowRight, Video, Book, CheckCircle2, Brain, Users, Target, Shield, GraduationCap, Zap } from "lucide-react";
+import { getSiteSettings } from "@/lib/settings";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, sort?: string, page?: string }> }) {
   const { category, sort = "newest", page: pageStr = "1" } = await searchParams;
@@ -15,7 +16,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
 
   const whereClause = { isActive: true, ...(category ? { category: { slug: category } } : {}) };
 
-  const [categories, totalCount, courses, sliders, siteFeatures, featuredCategories, stats] = await Promise.all([
+  const [categories, totalCount, courses, sliders, siteFeatures, featuredCategories, stats, settings] = await Promise.all([
     prisma.category.findMany({
       orderBy: { name: "asc" }
     }),
@@ -50,7 +51,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     prisma.stat.findMany({
       where: { isActive: true },
       orderBy: { order: "asc" }
-    })
+    }),
+    getSiteSettings()
   ]);
 
   const displayStats = stats.length > 0 ? stats : [
@@ -96,7 +98,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     <main className="min-h-screen bg-background text-foreground pb-20">
       <Navbar />
       
-      <HeroSlider sliders={sliders as any} />
+      <HeroSlider sliders={sliders as any} aspectRatio={settings?.sliderAspectRatio || "16:9"} />
 
       {/* İstatistikler & Güven Bandı */}
       {displayStats.length > 0 && (

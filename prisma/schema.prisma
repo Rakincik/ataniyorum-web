@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model User {
@@ -166,16 +166,22 @@ model Coupon {
 }
 
 model Slider {
-  id         String   @id @default(cuid())
-  image      String
-  title      String
-  subtitle   String?
-  buttonText String?
-  buttonLink String?
-  order      Int      @default(0)
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            String   @id @default(cuid())
+  image         String
+  title         String
+  subtitle      String?
+  buttonText    String?
+  buttonLink    String?
+  order         Int      @default(0)
+  isActive      Boolean  @default(true)
+  textAlignment String   @default("left")  // "left", "center", "right"
+  textPosition  String   @default("center") // "top", "center", "bottom"
+  buttonStyle   String   @default("filled") // "filled", "outline"
+  imageFit      String   @default("cover")  // "cover", "contain"
+  imageZoom     Int      @default(100)      // Percentage zoom (e.g. 100, 105, 110, 120, 80)
+  imagePosition String   @default("center") // "center", "top", "bottom", "left", "right"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Feature {
@@ -255,10 +261,11 @@ model AboutPage {
 }
 
 model SiteSettings {
-  id               String   @id @default("default")
-  isMaintenance    Boolean  @default(false)
-  maintenanceImage String?
-  maintenanceTitle String?  @default("Sistemimizde Bakım Yapılmaktadır")
-  maintenanceDesc  String?  @default("Sizlere daha iyi hizmet verebilmek için altyapı çalışması yürütüyoruz. Kısa süre içerisinde tekrar yayında olacağız.")
-  updatedAt        DateTime @updatedAt
+  id                String   @id @default("default")
+  isMaintenance     Boolean  @default(false)
+  maintenanceImage  String?
+  maintenanceTitle  String?  @default("Sistemimizde Bakım Yapılmaktadır")
+  maintenanceDesc   String?  @default("Sizlere daha iyi hizmet verebilmek için altyapı çalışması yürütüyoruz. Kısa süre içerisinde tekrar yayında olacağız.")
+  sliderAspectRatio String   @default("16:9")  // "16:9", "21:9", "boxed"
+  updatedAt         DateTime @updatedAt
 }

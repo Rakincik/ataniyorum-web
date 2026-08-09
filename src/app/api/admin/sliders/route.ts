@@ -16,21 +16,41 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { image, title, subtitle, buttonText, buttonLink, order, isActive } = body;
+    const { 
+      image, 
+      title, 
+      subtitle, 
+      buttonText, 
+      buttonLink, 
+      order, 
+      isActive,
+      textAlignment,
+      textPosition,
+      buttonStyle,
+      imageFit,
+      imageZoom,
+      imagePosition 
+    } = body;
 
-    if (!image || !title) {
-      return NextResponse.json({ error: "Image and title are required" }, { status: 400 });
+    if (!image) {
+      return NextResponse.json({ error: "Image is required" }, { status: 400 });
     }
 
     const slider = await prisma.slider.create({
       data: {
         image,
-        title,
+        title: title || "",
         subtitle,
         buttonText,
         buttonLink,
         order: Number(order) || 0,
         isActive: isActive ?? true,
+        textAlignment: textAlignment || "left",
+        textPosition: textPosition || "center",
+        buttonStyle: buttonStyle || "filled",
+        imageFit: imageFit || "cover",
+        imageZoom: Number(imageZoom) || 100,
+        imagePosition: imagePosition || "center",
       },
     });
 

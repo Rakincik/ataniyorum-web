@@ -22,6 +22,7 @@ export async function PUT(req: Request) {
         maintenanceImage: data.maintenanceImage || null,
         maintenanceTitle: data.maintenanceTitle || "Sistemimizde Bakım Yapılmaktadır",
         maintenanceDesc: data.maintenanceDesc || "",
+        sliderAspectRatio: data.sliderAspectRatio || "16:9",
       },
       create: {
         id: "default",
@@ -29,6 +30,7 @@ export async function PUT(req: Request) {
         maintenanceImage: data.maintenanceImage || null,
         maintenanceTitle: data.maintenanceTitle || "Sistemimizde Bakım Yapılmaktadır",
         maintenanceDesc: data.maintenanceDesc || "",
+        sliderAspectRatio: data.sliderAspectRatio || "16:9",
       }
     });
 

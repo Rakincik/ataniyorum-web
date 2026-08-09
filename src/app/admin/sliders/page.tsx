@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Image as ImageIcon, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, CheckCircle2, XCircle, Sparkles } from "lucide-react";
 import Image from "next/image";
 import ConfirmModal from "@/components/ConfirmModal";
 
@@ -14,6 +14,12 @@ type Slider = {
   buttonLink: string | null;
   order: number;
   isActive: boolean;
+  textAlignment: string;
+  textPosition: string;
+  buttonStyle: string;
+  imageFit: string;
+  imageZoom: number;
+  imagePosition: string;
 };
 
 export default function AdminSliderClient() {
@@ -30,6 +36,12 @@ export default function AdminSliderClient() {
     buttonLink: "",
     order: 0,
     isActive: true,
+    textAlignment: "left",
+    textPosition: "center",
+    buttonStyle: "filled",
+    imageFit: "cover",
+    imageZoom: 100,
+    imagePosition: "center",
   });
 
   const [uploading, setUploading] = useState(false);
@@ -80,8 +92,8 @@ export default function AdminSliderClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.image || !formData.title) {
-      alert("Lütfen görsel ve başlık alanlarını doldurun.");
+    if (!formData.image) {
+      alert("Lütfen bir görsel yükleyin.");
       return;
     }
 
@@ -131,6 +143,12 @@ export default function AdminSliderClient() {
       buttonLink: slider.buttonLink || "",
       order: slider.order,
       isActive: slider.isActive,
+      textAlignment: slider.textAlignment || "left",
+      textPosition: slider.textPosition || "center",
+      buttonStyle: slider.buttonStyle || "filled",
+      imageFit: slider.imageFit || "cover",
+      imageZoom: slider.imageZoom ?? 100,
+      imagePosition: slider.imagePosition || "center",
     });
     setEditingId(slider.id);
     setIsFormOpen(true);
@@ -145,6 +163,12 @@ export default function AdminSliderClient() {
       buttonLink: "",
       order: 0,
       isActive: true,
+      textAlignment: "left",
+      textPosition: "center",
+      buttonStyle: "filled",
+      imageFit: "cover",
+      imageZoom: 100,
+      imagePosition: "center",
     });
     setEditingId(null);
     setIsFormOpen(true);
@@ -167,111 +191,272 @@ export default function AdminSliderClient() {
       </div>
 
       {isFormOpen && (
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-8">
-          <h2 className="text-lg font-semibold mb-4">{editingId ? "Slider Düzenle" : "Yeni Slider Ekle"}</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2 md:col-span-2">
-                <div>
-                  <label className="text-sm font-medium text-gray-900">Görsel (Upload)</label>
-                  <p className="text-xs text-gray-500 mt-0.5">Önerilen boyut: <span className="font-semibold text-gray-700">1920x800</span> (Geniş Ekran)</p>
+        <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm mb-8">
+          <h2 className="text-lg font-black text-gray-900 tracking-tight mb-6">{editingId ? "Slider Düzenle" : "Yeni Slider Ekle"}</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2 md:col-span-2">
+                  <div>
+                    <label className="text-sm font-medium text-gray-900">Görsel (Upload)</label>
+                    <p className="text-xs text-gray-500 mt-0.5">Önerilen boyut: <span className="font-semibold text-gray-700">1920x800</span> (Geniş Ekran)</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {formData.image && (
+                      <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-gray-200">
+                        <Image src={formData.image} alt="Preview" fill className="object-cover" />
+                      </div>
+                    )}
+                    <label className="flex-1 cursor-pointer border-2 border-dashed border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                      <ImageIcon className="w-6 h-6 mb-2" />
+                      <span className="text-sm">{uploading ? "Yükleniyor..." : "Bilgisayardan Seç (Tıklayın)"}</span>
+                      <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
+                    </label>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  {formData.image && (
-                    <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-gray-200">
-                      <Image src={formData.image} alt="Preview" fill className="object-cover" />
-                    </div>
-                  )}
-                  <label className="flex-1 cursor-pointer border-2 border-dashed border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
-                    <ImageIcon className="w-6 h-6 mb-2" />
-                    <span className="text-sm">{uploading ? "Yükleniyor..." : "Bilgisayardan Seç (Tıklayın)"}</span>
-                    <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Başlık (Opsiyonel)</label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={e => setFormData({...formData, title: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Alt Başlık (Opsiyonel)</label>
+                  <input
+                    type="text"
+                    value={formData.subtitle}
+                    onChange={e => setFormData({...formData, subtitle: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Buton Yazısı (Opsiyonel)</label>
+                  <input
+                    type="text"
+                    value={formData.buttonText}
+                    onChange={e => setFormData({...formData, buttonText: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Buton Linki (Opsiyonel)</label>
+                  <input
+                    type="text"
+                    value={formData.buttonLink}
+                    onChange={e => setFormData({...formData, buttonLink: e.target.value})}
+                    placeholder="/course/oabt"
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Sıra (Opsiyonel)</label>
+                  <input
+                    type="number"
+                    value={formData.order}
+                    onChange={e => setFormData({...formData, order: Number(e.target.value)})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Metin Hizalaması</label>
+                  <select
+                    value={formData.textAlignment}
+                    onChange={e => setFormData({...formData, textAlignment: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="left">Sola Hizala</option>
+                    <option value="center">Ortala</option>
+                    <option value="right">Sağa Hizala</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Metin Dikey Konumu</label>
+                  <select
+                    value={formData.textPosition}
+                    onChange={e => setFormData({...formData, textPosition: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="top">Üst (Top)</option>
+                    <option value="center">Orta (Center)</option>
+                    <option value="bottom">Alt (Bottom)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Buton Stili</label>
+                  <select
+                    value={formData.buttonStyle}
+                    onChange={e => setFormData({...formData, buttonStyle: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="filled">Dolu Buton</option>
+                    <option value="outline">İçi Boş / Çerçeveli</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Görsel Yerleşimi (Fit)</label>
+                  <select
+                    value={formData.imageFit}
+                    onChange={e => setFormData({...formData, imageFit: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="cover">Alanı Kapla (Kırparak Sığdır)</option>
+                    <option value="contain">Görseli Sığdır (Kırpmadan Göster)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Yakınlaştırma (Zoom)</label>
+                  <select
+                    value={formData.imageZoom}
+                    onChange={e => setFormData({...formData, imageZoom: Number(e.target.value)})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value={80}>%80 (Uzaklaştır)</option>
+                    <option value={90}>%90 (Uzaklaştır)</option>
+                    <option value={100}>%100 (Orijinal)</option>
+                    <option value={105}>%105 (Yakınlaştır)</option>
+                    <option value={110}>%110 (Yakınlaştır)</option>
+                    <option value={115}>%115 (Yakınlaştır)</option>
+                    <option value={120}>%120 (Yakınlaştır)</option>
+                    <option value={130}>%130 (Yakınlaştır)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Görsel Konum Hizalaması</label>
+                  <select
+                    value={formData.imagePosition}
+                    onChange={e => setFormData({...formData, imagePosition: e.target.value})}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="center">Ortala (Center)</option>
+                    <option value="top">Üste Hizala (Top)</option>
+                    <option value="bottom">Alta Hizala (Bottom)</option>
+                    <option value="left">Sola Hizala (Left)</option>
+                    <option value="right">Sağa Hizala (Right)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1 flex items-center mt-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.isActive}
+                      onChange={e => setFormData({...formData, isActive: e.target.checked})}
+                      className="w-5 h-5 rounded text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm font-medium">Aktif</span>
                   </label>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium">Başlık</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={e => setFormData({...formData, title: e.target.value})}
-                  required
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
-                />
+              <div className="flex gap-2 pt-4">
+                <button
+                  type="submit"
+                  disabled={uploading}
+                  className="px-6 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors cursor-pointer"
+                >
+                  Kaydet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsFormOpen(false)}
+                  className="px-6 py-2 bg-gray-200 text-gray-800 rounded-xl font-medium hover:bg-gray-300 transition-colors cursor-pointer"
+                >
+                  İptal
+                </button>
               </div>
+            </form>
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium">Alt Başlık (Opsiyonel)</label>
-                <input
-                  type="text"
-                  value={formData.subtitle}
-                  onChange={e => setFormData({...formData, subtitle: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+            {/* Live Preview Panel */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="sticky top-24">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-primary-500 animate-pulse" />
+                    Canlı Önizleme (Live Preview)
+                  </h3>
+                  <span className="text-[9px] bg-primary-50 text-primary-600 font-extrabold px-2 py-0.5 rounded-md uppercase tracking-wider">Masaüstü Modu</span>
+                </div>
+                
+                <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden bg-gray-950 border border-gray-200 shadow-md flex items-center justify-center">
+                  {formData.image ? (
+                    <>
+                      {/* Main Image under preview scale */}
+                      <img 
+                        src={formData.image} 
+                        alt="Preview" 
+                        className="absolute inset-0 w-full h-full transition-all duration-300"
+                        style={{
+                          objectFit: formData.imageFit as any,
+                          objectPosition: formData.imagePosition,
+                          transform: `scale(${formData.imageZoom / 100})`,
+                        }}
+                      />
+                      
+                      {/* Gradient overlay if text is present */}
+                      {((formData.title?.trim() && formData.title !== "Atanıyorum Hocam") || formData.subtitle?.trim() || formData.buttonText?.trim()) && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent z-10 transition-opacity duration-300" />
+                      )}
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium">Buton Yazısı (Opsiyonel)</label>
-                <input
-                  type="text"
-                  value={formData.buttonText}
-                  onChange={e => setFormData({...formData, buttonText: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm font-medium">Buton Linki (Opsiyonel)</label>
-                <input
-                  type="text"
-                  value={formData.buttonLink}
-                  onChange={e => setFormData({...formData, buttonLink: e.target.value})}
-                  placeholder="/course/oabt"
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm font-medium">Sıra (Opsiyonel)</label>
-                <input
-                  type="number"
-                  value={formData.order}
-                  onChange={e => setFormData({...formData, order: Number(e.target.value)})}
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-
-              <div className="space-y-1 flex items-center mt-6">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.isActive}
-                    onChange={e => setFormData({...formData, isActive: e.target.checked})}
-                    className="w-5 h-5 rounded text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="text-sm font-medium">Aktif</span>
-                </label>
+                      {/* Texts overlay */}
+                      <div className={`absolute inset-0 z-20 p-6 flex flex-col text-white select-none ${
+                        formData.textPosition === "top" ? "justify-start pt-10" :
+                        formData.textPosition === "bottom" ? "justify-end pb-10" :
+                        "justify-center"
+                      } ${
+                        formData.textAlignment === "center" ? "items-center text-center" :
+                        formData.textAlignment === "right" ? "items-end text-right" :
+                        "items-start text-left"
+                      }`}>
+                        {formData.title?.trim() && formData.title !== "Atanıyorum Hocam" && (
+                          <h4 className="text-sm md:text-base font-bold tracking-tight mb-1 max-w-[90%] leading-tight drop-shadow-md">
+                            {formData.title}
+                          </h4>
+                        )}
+                        
+                        {formData.subtitle?.trim() && (
+                          <p className="text-[10px] text-white/80 max-w-[85%] mb-3 font-medium line-clamp-2">
+                            {formData.subtitle}
+                          </p>
+                        )}
+                        
+                        {formData.buttonText?.trim() && (
+                          <div className={`px-4 py-1.5 text-[9px] font-bold rounded-lg shadow-sm transition-all ${
+                            formData.buttonStyle === "outline"
+                              ? "bg-transparent border border-white text-white"
+                              : "bg-primary-600 text-white"
+                          }`}>
+                            {formData.buttonText}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center p-6 text-gray-500">
+                      <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-40 text-gray-400" />
+                      <p className="text-xs font-bold">Önizleme için görsel yükleyin</p>
+                      <p className="text-[10px] text-gray-400 mt-1 max-w-[200px] mx-auto leading-relaxed">
+                        Görsel yüklediğinizde, uyguladığınız ayarlar anlık olarak burada görüntülenecektir.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-
-            <div className="flex gap-2 pt-4">
-              <button
-                type="submit"
-                disabled={uploading}
-                className="px-6 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
-              >
-                Kaydet
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsFormOpen(false)}
-                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-xl font-medium hover:bg-gray-300 transition-colors"
-              >
-                İptal
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       )}
 
