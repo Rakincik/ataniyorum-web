@@ -3,6 +3,26 @@ import { join } from "path";
 
 console.log("NextAuth Sanitizer - process.cwd():", process.cwd());
 
+// Global URL class override to clean comma-separated duplicate URLs at runtime
+if (typeof global !== "undefined" && (global as any).URL) {
+  const OriginalURL = (global as any).URL;
+  (global as any).URL = class PatchedURL extends OriginalURL {
+    constructor(input: string | URL, base?: string | URL) {
+      if (typeof input === "string" && input.includes(",")) {
+        const parts = input.split(",");
+        if (parts.length > 0 && parts[0].trim().startsWith("http")) {
+          const cleanInput = parts[0].trim();
+          console.log(`[PatchedURL] Sanitized input URL: "${input}" -> "${cleanInput}"`);
+          super(cleanInput, base);
+          return;
+        }
+      }
+      super(input, base);
+    }
+  };
+  console.log("NextAuth Sanitizer - Global URL class constructor override installed successfully");
+}
+
 // Global prototype override to fix duplicate X-Forwarded-Host headers injected by VPS/Cloudflare double proxying
 if (typeof Headers !== "undefined" && Headers.prototype) {
   const originalGet = Headers.prototype.get;
