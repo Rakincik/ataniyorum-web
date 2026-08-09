@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Quote, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 // We need a helper to generate alternate rows in the map
 // We can't use `motion` from framer-motion easily in Server Components for the `whileInView`,
 // unless we make a separate Client Component for the rows.

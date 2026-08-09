@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -28,6 +29,8 @@ export async function PUT(req: Request) {
       update: data,
       create: { id: "default", ...data }
     });
+
+    revalidatePath("/about");
 
     return NextResponse.json({ success: true, about });
   } catch (error) {

@@ -2,6 +2,8 @@ import Navbar from "@/components/Navbar";
 import { GraduationCap, Award, Users, Target } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function AboutPage() {
   let about = await prisma.aboutPage.findUnique({
     where: { id: "default" }
