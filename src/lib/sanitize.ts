@@ -3,6 +3,21 @@ import { join } from "path";
 
 console.log("NextAuth Sanitizer - process.cwd():", process.cwd());
 
+// Global prototype override to fix duplicate X-Forwarded-Host headers injected by VPS/Cloudflare double proxying
+if (typeof Headers !== "undefined" && Headers.prototype && Headers.prototype.get) {
+  const originalGet = Headers.prototype.get;
+  Headers.prototype.get = function (this: Headers, name: string) {
+    const value = originalGet.call(this, name);
+    if (name.toLowerCase() === "x-forwarded-host" && value && value.includes(",")) {
+      const cleanValue = value.split(",")[0].trim();
+      console.log(`[Headers.get] Sanitized duplicate X-Forwarded-Host: "${value}" -> "${cleanValue}"`);
+      return cleanValue;
+    }
+    return value;
+  };
+  console.log("NextAuth Sanitizer - Global Headers.prototype.get override installed successfully");
+}
+
 try {
   const envPath = join(process.cwd(), ".env");
   const envContent = readFileSync(envPath, "utf-8");
