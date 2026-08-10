@@ -39,7 +39,19 @@ export function generateShopierFormHTML(options: ShopierPaymentOptions): string 
     buyer_email: options.buyerEmail,
     buyer_account_age: "0",
     buyer_id_nr: options.buyerTcNo || "11111111111",
-    buyer_phone: options.buyerPhone ? `90${options.buyerPhone.replace(/\D/g, "")}` : "905555555555",
+    buyer_phone: (() => {
+      let phone = options.buyerPhone ? options.buyerPhone.replace(/\D/g, "") : "";
+      if (phone.startsWith("90") && phone.length === 12) {
+        return phone;
+      }
+      if (phone.startsWith("0")) {
+        phone = phone.slice(1);
+      }
+      if (phone.length === 10) {
+        return "90" + phone;
+      }
+      return "905555555555"; // Default fallback
+    })(),
     billing_address: options.buyerAddress || "Turkiye",
     billing_city: options.buyerCity || "Ankara",
     billing_country: "Turkey",
