@@ -14,6 +14,7 @@ export async function POST(req: Request) {
       categoryId,
       promoVideoUrl,
       image,
+      shopierUrl,
       variants,
       addons,
       features,
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
         categoryId,
         promoVideoUrl,
         image,
+        shopierUrl: shopierUrl || null,
         isActive: isActive !== undefined ? Boolean(isActive) : true,
         isStockOut: Boolean(isStockOut),
         isFree: Boolean(isFree),
@@ -52,7 +54,8 @@ export async function POST(req: Request) {
         addons: {
           create: addons.map((a: any) => ({
             name: a.name,
-            price: a.price
+            price: a.price,
+            shopierUrl: a.shopierUrl || null
           }))
         },
         features: {

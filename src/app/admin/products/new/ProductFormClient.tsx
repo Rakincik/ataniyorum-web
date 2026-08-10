@@ -49,6 +49,7 @@ export default function ProductFormClient({ categories, product, allProducts = [
   const [basePrice, setBasePrice] = useState(product?.basePrice || 0);
   const [categoryId, setCategoryId] = useState(product?.categoryId || categories[0]?.id || "");
   const [coverImage, setCoverImage] = useState(product?.image || "");
+  const [shopierUrl, setShopierUrl] = useState(product?.shopierUrl || "");
   
   // Status & Stock States
   const [isActive, setIsActive] = useState(product?.isActive ?? true);
@@ -66,8 +67,8 @@ export default function ProductFormClient({ categories, product, allProducts = [
   );
   
   // Addons
-  const [addons, setAddons] = useState<{ id?: string; name: string; price: number }[]>(
-    product?.addons?.length ? product.addons.map(a => ({ id: a.id, name: a.name, price: a.price })) : []
+  const [addons, setAddons] = useState<{ id?: string; name: string; price: number; shopierUrl?: string }[]>(
+    product?.addons?.length ? product.addons.map(a => ({ id: a.id, name: a.name, price: a.price, shopierUrl: a.shopierUrl || "" })) : []
   );
 
   // Features
@@ -127,13 +128,15 @@ export default function ProductFormClient({ categories, product, allProducts = [
   };
 
   // Addons management
-  const addAddon = () => setAddons([...addons, { name: "", price: 0 }]);
-  const updateAddon = (index: number, field: "name" | "price", val: any) => {
+  const addAddon = () => setAddons([...addons, { name: "", price: 0, shopierUrl: "" }]);
+  const updateAddon = (index: number, field: "name" | "price" | "shopierUrl", val: any) => {
     const newAddons = [...addons];
     if (field === "name") {
       newAddons[index].name = val as string;
-    } else {
+    } else if (field === "price") {
       newAddons[index].price = Number(val) || 0;
+    } else if (field === "shopierUrl") {
+      newAddons[index].shopierUrl = val as string;
     }
     setAddons(newAddons);
   };
@@ -198,7 +201,7 @@ export default function ProductFormClient({ categories, product, allProducts = [
     setIsSubmitting(true);
     try {
       const payload = {
-        title, slug, description, content, basePrice: isFree ? 0 : basePrice, categoryId, promoVideoUrl: null, image: coverImage,
+        title, slug, description, content, basePrice: isFree ? 0 : basePrice, categoryId, promoVideoUrl: null, image: coverImage, shopierUrl,
         variants: isFree ? variants.map(v => ({ ...v, price: 0 })) : variants, 
         addons, features, images: galleryUrls, crossSellTargetIds,
         isActive, isStockOut, isFree
@@ -362,7 +365,7 @@ export default function ProductFormClient({ categories, product, allProducts = [
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-extrabold text-gray-700 uppercase">SEO URL (Slug)</label>
                 <input 
@@ -383,6 +386,17 @@ export default function ProductFormClient({ categories, product, allProducts = [
                   onChange={(e) => setBasePrice(e.target.value === "" ? 0 : parseFloat(e.target.value) || 0)} 
                   placeholder="0"
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-black text-gray-900 outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50" 
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-extrabold text-purple-700 uppercase">Taban Fiyat Shopier Linki</label>
+                <input 
+                  type="url" 
+                  value={shopierUrl} 
+                  onChange={(e) => setShopierUrl(e.target.value)} 
+                  placeholder="Örn: https://www.shopier.com/..." 
+                  className="w-full px-4 py-2.5 bg-purple-50/30 border border-purple-100 rounded-xl text-xs font-medium text-gray-900 outline-none focus:ring-2 focus:ring-purple-500" 
                 />
               </div>
             </div>
@@ -564,31 +578,44 @@ export default function ProductFormClient({ categories, product, allProducts = [
                   <p className="text-xs text-gray-400 font-medium py-4 text-center">Ek hizmet tanımlanmadı.</p>
                 ) : (
                   addons.map((a, i) => (
-                    <div key={i} className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-gray-200 shadow-xs">
-                      <input 
-                        type="text" 
-                        value={a.name} 
-                        onChange={(e) => updateAddon(i, "name", e.target.value)}
-                        placeholder="Ek Hizmet Adı (Örn: Kargo Seti)"
-                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                      <div className="w-32 flex items-center gap-1">
-                        <span className="text-xs font-bold text-gray-400">₺</span>
+                    <div key={i} className="space-y-2.5 p-4 bg-white rounded-2xl border border-gray-200 shadow-xs">
+                      <div className="flex items-center gap-3">
                         <input 
-                          type="number" 
-                          value={a.price === 0 ? "" : a.price} 
-                          onChange={(e) => updateAddon(i, "price", e.target.value === "" ? 0 : parseFloat(e.target.value) || 0)}
-                          placeholder="0"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-black text-gray-900 outline-none focus:ring-2 focus:ring-purple-500"
+                          type="text" 
+                          value={a.name} 
+                          onChange={(e) => updateAddon(i, "name", e.target.value)}
+                          placeholder="Ek Hizmet Adı (Örn: Kargo Seti)"
+                          className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                        <div className="w-32 flex items-center gap-1">
+                          <span className="text-xs font-bold text-gray-400">₺</span>
+                          <input 
+                            type="number" 
+                            value={a.price === 0 ? "" : a.price} 
+                            onChange={(e) => updateAddon(i, "price", e.target.value === "" ? 0 : parseFloat(e.target.value) || 0)}
+                            placeholder="0"
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-black text-gray-900 outline-none focus:ring-2 focus:ring-purple-500"
+                          />
+                        </div>
+                        <button 
+                          type="button" 
+                          onClick={() => removeAddon(i)}
+                          className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      {/* Shopier URL Input */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider flex-shrink-0 bg-purple-50 px-2 py-1 rounded-md">Shopier Linki:</span>
+                        <input 
+                          type="url" 
+                          value={a.shopierUrl || ""} 
+                          onChange={(e) => updateAddon(i, "shopierUrl", e.target.value)}
+                          placeholder="Örn: https://www.shopier.com/... (Ek Hizmet Ödeme Linki)"
+                          className="flex-1 px-3 py-2 bg-purple-50/30 border border-purple-100 rounded-xl text-xs font-medium text-gray-900 outline-none focus:ring-2 focus:ring-purple-500"
                         />
                       </div>
-                      <button 
-                        type="button" 
-                        onClick={() => removeAddon(i)}
-                        className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
                     </div>
                   ))
                 )}

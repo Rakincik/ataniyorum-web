@@ -44,6 +44,7 @@ model Product {
   image         String?          // Legacy/Main image
   basePrice     Float            @default(0)
   promoVideoUrl String?
+  shopierUrl    String?          // Optional Shopier direct redirect URL for base price
   categoryId    String
   category      Category         @relation(fields: [categoryId], references: [id])
   variants      ProductVariant[]
@@ -99,6 +100,7 @@ model ProductAddon {
   id         String      @id @default(cuid())
   name       String      
   price      Float       
+  shopierUrl String?     // Optional Shopier direct redirect URL for this addon
   productId  String
   product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt  DateTime    @default(now())

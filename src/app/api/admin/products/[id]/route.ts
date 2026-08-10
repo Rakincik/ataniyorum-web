@@ -15,6 +15,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       categoryId,
       promoVideoUrl,
       image,
+      shopierUrl,
       variants,
       addons,
       features,
@@ -45,6 +46,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         categoryId,
         promoVideoUrl,
         image,
+        shopierUrl: shopierUrl || null,
         isActive: isActive !== undefined ? Boolean(isActive) : true,
         isStockOut: Boolean(isStockOut),
         isFree: Boolean(isFree),
@@ -54,7 +56,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
           deleteMany: {},
           create: addons.map((a: any) => ({
             name: a.name,
-            price: a.price
+            price: a.price,
+            shopierUrl: a.shopierUrl || null
           }))
         },
 

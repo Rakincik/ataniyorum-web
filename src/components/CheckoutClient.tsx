@@ -52,9 +52,10 @@ export default function CheckoutClient({ course, variant, selectedAddons }: Chec
       return;
     }
 
-    if (variant.shopierUrl) {
+    const redirectUrl = variant.shopierUrl || (course as any).shopierUrl;
+    if (redirectUrl) {
       setIsProcessing(true);
-      window.location.href = variant.shopierUrl;
+      window.location.href = redirectUrl;
       return;
     }
 
@@ -141,12 +142,24 @@ export default function CheckoutClient({ course, variant, selectedAddons }: Chec
               <p className="text-foreground/60 text-sm mt-2 font-medium">Paket: {variant.name}</p>
               
               {selectedAddons.length > 0 && (
-                <div className="mt-3 space-y-1">
+                <div className="mt-3 space-y-2">
                   {selectedAddons.map(a => (
-                    <p key={a.id} className="text-xs text-foreground/50 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-foreground/30 rounded-full"></span>
-                      + {a.name} (₺{a.price.toLocaleString('tr-TR')})
-                    </p>
+                    <div key={a.id} className="text-xs text-foreground/50 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 bg-purple-50/20 dark:bg-purple-900/10 p-2 rounded-xl border border-purple-100/20">
+                      <p className="flex items-center gap-1">
+                        <span className="w-1 h-1 bg-purple-400 rounded-full"></span>
+                        + {a.name} (₺{a.price.toLocaleString('tr-TR')})
+                      </p>
+                      {(a as any).shopierUrl && (
+                        <a 
+                          href={(a as any).shopierUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="px-2 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-[10px] font-bold transition-all text-center whitespace-nowrap cursor-pointer"
+                        >
+                          Ek Hizmeti Shopier'den Al ➔
+                        </a>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
