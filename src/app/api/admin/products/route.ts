@@ -45,7 +45,8 @@ export async function POST(req: Request) {
         variants: {
           create: variants.map((v: any) => ({
             name: v.name,
-            price: v.price
+            price: v.price,
+            shopierUrl: v.shopierUrl || null
           }))
         },
         addons: {

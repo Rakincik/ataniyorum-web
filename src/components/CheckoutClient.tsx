@@ -52,6 +52,12 @@ export default function CheckoutClient({ course, variant, selectedAddons }: Chec
       return;
     }
 
+    if (variant.shopierUrl) {
+      setIsProcessing(true);
+      window.location.href = variant.shopierUrl;
+      return;
+    }
+
     setIsProcessing(true);
 
     try {

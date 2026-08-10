@@ -110,6 +110,7 @@ model ProductVariant {
   name       String      // e.g. "Online Katılım"
   price      Float       // Price delta from basePrice (e.g. 0, 500, 1000)
   stock      Int?        // Optional, if null = unlimited
+  shopierUrl String?     // Optional Shopier direct redirect URL
   productId  String
   product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]

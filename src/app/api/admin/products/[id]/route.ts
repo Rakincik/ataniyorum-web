@@ -106,11 +106,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       if (v.id) {
         await prisma.productVariant.update({
           where: { id: v.id },
-          data: { name: v.name, price: v.price }
+          data: { name: v.name, price: v.price, shopierUrl: v.shopierUrl || null }
         });
       } else {
         await prisma.productVariant.create({
-          data: { name: v.name, price: v.price, productId: id }
+          data: { name: v.name, price: v.price, shopierUrl: v.shopierUrl || null, productId: id }
         });
       }
     }

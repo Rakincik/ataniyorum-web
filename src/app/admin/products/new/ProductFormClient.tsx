@@ -61,8 +61,8 @@ export default function ProductFormClient({ categories, product, allProducts = [
   );
 
   // Variants
-  const [variants, setVariants] = useState<{ id?: string; name: string; price: number }[]>(
-    product?.variants?.length ? product.variants.map(v => ({ id: v.id, name: v.name, price: v.price })) : [{ name: "Online Katılım", price: 0 }]
+  const [variants, setVariants] = useState<{ id?: string; name: string; price: number; shopierUrl?: string }[]>(
+    product?.variants?.length ? product.variants.map(v => ({ id: v.id, name: v.name, price: v.price, shopierUrl: v.shopierUrl || "" })) : [{ name: "Online Katılım", price: 0, shopierUrl: "" }]
   );
   
   // Addons
@@ -106,13 +106,15 @@ export default function ProductFormClient({ categories, product, allProducts = [
   };
 
   // Variants management
-  const addVariant = () => setVariants([...variants, { name: "", price: 0 }]);
-  const updateVariant = (index: number, field: "name" | "price", val: any) => {
+  const addVariant = () => setVariants([...variants, { name: "", price: 0, shopierUrl: "" }]);
+  const updateVariant = (index: number, field: "name" | "price" | "shopierUrl", val: any) => {
     const newVariants = [...variants];
     if (field === "name") {
       newVariants[index].name = val as string;
-    } else {
+    } else if (field === "price") {
       newVariants[index].price = Number(val) || 0;
+    } else if (field === "shopierUrl") {
+      newVariants[index].shopierUrl = val as string;
     }
     setVariants(newVariants);
   };
@@ -494,32 +496,45 @@ export default function ProductFormClient({ categories, product, allProducts = [
 
               <div className="space-y-3">
                 {variants.map((v, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-gray-200 shadow-xs">
-                    <input 
-                      type="text" 
-                      value={v.name} 
-                      onChange={(e) => updateVariant(i, "name", e.target.value)}
-                      placeholder="Paket Adı (Örn: Canlı + Video)"
-                      className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                    <div className="w-32 flex items-center gap-1">
-                      <span className="text-xs font-bold text-gray-400">₺</span>
+                  <div key={i} className="space-y-2.5 p-4 bg-white rounded-2xl border border-gray-200 shadow-xs">
+                    <div className="flex items-center gap-3">
                       <input 
-                        type="number" 
-                        disabled={isFree}
-                        value={isFree ? 0 : (v.price === 0 ? "" : v.price)} 
-                        onChange={(e) => updateVariant(i, "price", e.target.value === "" ? 0 : parseFloat(e.target.value) || 0)}
-                        placeholder="0"
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-black text-gray-900 outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                        type="text" 
+                        value={v.name} 
+                        onChange={(e) => updateVariant(i, "name", e.target.value)}
+                        placeholder="Paket Adı (Örn: Canlı + Video)"
+                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                      <div className="w-32 flex items-center gap-1">
+                        <span className="text-xs font-bold text-gray-400">₺</span>
+                        <input 
+                          type="number" 
+                          disabled={isFree}
+                          value={isFree ? 0 : (v.price === 0 ? "" : v.price)} 
+                          onChange={(e) => updateVariant(i, "price", e.target.value === "" ? 0 : parseFloat(e.target.value) || 0)}
+                          placeholder="0"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-black text-gray-900 outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                        />
+                      </div>
+                      <button 
+                        type="button" 
+                        onClick={() => removeVariant(i)}
+                        className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {/* Shopier URL Input */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider flex-shrink-0 bg-purple-50 px-2 py-1 rounded-md">Shopier Linki:</span>
+                      <input 
+                        type="url" 
+                        value={v.shopierUrl || ""} 
+                        onChange={(e) => updateVariant(i, "shopierUrl", e.target.value)}
+                        placeholder="Örn: https://www.shopier.com/31846279 (Doğrudan Yönlendirme)"
+                        className="flex-1 px-3 py-2 bg-purple-50/30 border border-purple-100 rounded-xl text-xs font-medium text-gray-900 outline-none focus:ring-2 focus:ring-purple-500"
                       />
                     </div>
-                    <button 
-                      type="button" 
-                      onClick={() => removeVariant(i)}
-                      className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
                   </div>
                 ))}
               </div>
