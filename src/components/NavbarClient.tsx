@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { User, ShoppingCart, ChevronDown } from "lucide-react";
+import { User, ShoppingCart, ChevronDown, BookOpen, GraduationCap, Brain, Compass, HelpCircle, Trophy, Sparkles, MessageCircle, AlertCircle, ArrowRight } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { Category } from "@/generated/prisma/client";
@@ -10,7 +10,18 @@ import type { Category } from "@/generated/prisma/client";
 import { useCart } from "@/context/CartContext";
 import { useSession, signOut } from "next-auth/react";
 
-export default function NavbarClient({ categories, logo }: { categories: Category[]; logo?: string | null }) {
+const getCategoryIcon = (slug: string) => {
+  const s = slug.toLowerCase();
+  if (s.includes("sinif") || s.includes("sınıf")) return <GraduationCap className="w-4 h-4" />;
+  if (s.includes("okul") || s.includes("oncesi")) return <Brain className="w-4 h-4" />;
+  if (s.includes("turkce") || s.includes("türkçe") || s.includes("edebiyat")) return <BookOpen className="w-4 h-4" />;
+  if (s.includes("matematik") || s.includes("mat")) return <Compass className="w-4 h-4" />;
+  if (s.includes("pdr") || s.includes("rehberlik")) return <Trophy className="w-4 h-4" />;
+  if (s.includes("sosyal") || s.includes("tarih") || s.includes("cografya")) return <Compass className="w-4 h-4" />;
+  return <HelpCircle className="w-4 h-4" />;
+};
+
+export default function NavbarClient({ categories, logo, dersPaneliUrl }: { categories: Category[]; logo?: string | null; dersPaneliUrl?: string | null }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -46,7 +57,21 @@ export default function NavbarClient({ categories, logo }: { categories: Categor
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#102a43]/95 backdrop-blur-md border-b border-white/10">
+      {/* Dynamic Apple Style Announcement Banner (Bilgi Şeridi - Menünün Üzerinde) */}
+      {announcement && announcement.isActive && (
+        <div className="bg-[#f5f5f7] dark:bg-zinc-800 py-3 px-4 text-center border-b border-gray-200 dark:border-white/10">
+          <p className="text-xs sm:text-sm text-[#1d1d1f] dark:text-zinc-200 font-semibold">
+            {announcement.text}
+            {announcement.linkText && (
+              <Link href={announcement.linkUrl || "/#courses"} className="text-primary-600 dark:text-primary-400 hover:underline ml-1 inline-flex items-center gap-1 font-bold">
+                {announcement.linkText} <span className="text-[11px]">⊕</span>
+              </Link>
+            )}
+          </p>
+        </div>
+      )}
+
+      <nav className="sticky top-0 z-50 bg-[#102a43]/95 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-white p-1 shadow-sm">
@@ -59,7 +84,7 @@ export default function NavbarClient({ categories, logo }: { categories: Categor
               />
             </div>
             <span className="font-bold text-lg tracking-tight text-white">
-              Atanıyorum <span className="text-primary-400">Hocam</span>
+              Atanıyorum Hocam
             </span>
           </Link>
 
@@ -71,34 +96,44 @@ export default function NavbarClient({ categories, logo }: { categories: Categor
             >
               <Link 
                 href="/#courses" 
-                className={`text-sm font-medium transition-colors flex items-center gap-1 ${
+                className={`text-base font-bold transition-colors flex items-center gap-1.5 ${
                   pathname === '/' ? 'text-white' : 'text-white/80 hover:text-white'
                 }`}
               >
                 Eğitimler
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4.5 h-4.5 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </Link>
               
-              {/* Dropdown Menu */}
+              {/* Mega Menu Dropdown */}
               {isDropdownOpen && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-3 overflow-hidden animate-fade-in-up">
-                  <div className="px-4 pb-2 mb-2 border-b border-gray-100">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Kategoriler</span>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-[920px] bg-white dark:bg-[#0f1d3a] rounded-[2rem] shadow-2xl border border-gray-100 dark:border-white/10 p-8 overflow-hidden animate-fade-in-up flex flex-col justify-between gap-6 z-[100]">
+                  <div className="grid grid-cols-3 gap-6">
+                    {categories.slice(0, 9).map((c) => (
+                      <Link 
+                        key={c.id} 
+                        href={`/?category=${c.slug}#courses`}
+                        className="group flex items-start gap-4 p-3 rounded-2xl hover:bg-primary-50/70 dark:hover:bg-white/5 transition-all duration-200"
+                      >
+                        <div className="w-11 h-11 rounded-xl bg-primary-50 dark:bg-white/5 text-primary-600 dark:text-primary-400 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                          {getCategoryIcon(c.slug)}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="block text-base font-extrabold text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+                            {c.name}
+                          </span>
+                          <span className="block text-xs text-gray-400 dark:text-gray-500 mt-0.5 leading-relaxed line-clamp-2">
+                            {c.description || "Nokta atışı hazırlık seti."}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                  {categories.map((c) => (
-                    <Link 
-                      key={c.id} 
-                      href={`/?category=${c.slug}#courses`}
-                      className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
-                    >
-                      {c.name}
-                    </Link>
-                  ))}
+                  
                   <Link 
                     href="/#courses"
-                    className="block px-4 py-2.5 text-sm font-bold text-primary-600 hover:bg-primary-50 transition-colors border-t border-gray-50 mt-1"
+                    className="inline-flex items-center gap-1.5 text-sm font-black text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors pt-4 border-t border-gray-100 dark:border-white/5"
                   >
-                    Tüm Eğitimleri Gör &rarr;
+                    Tüm Eğitim Programlarını İncele <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               )}
@@ -106,24 +141,24 @@ export default function NavbarClient({ categories, logo }: { categories: Categor
 
             <Link 
               href="/team" 
-              className={`text-sm font-medium transition-colors ${
-                pathname === '/team' ? 'text-white border-b-2 border-white pb-1 mt-1' : 'text-white/80 hover:text-white'
+              className={`text-base font-bold transition-colors ${
+                pathname === '/team' ? 'text-white border-b-2 border-white pb-1.5 mt-1' : 'text-white/80 hover:text-white'
               }`}
             >
               Kadromuz
             </Link>
             <Link 
               href="/about" 
-              className={`text-sm font-medium transition-colors ${
-                pathname === '/about' ? 'text-white border-b-2 border-white pb-1 mt-1' : 'text-white/80 hover:text-white'
+              className={`text-base font-bold transition-colors ${
+                pathname === '/about' ? 'text-white border-b-2 border-white pb-1.5 mt-1' : 'text-white/80 hover:text-white'
               }`}
             >
               Hakkımızda
             </Link>
             <Link 
               href="/contact" 
-              className={`text-sm font-medium transition-colors ${
-                pathname === '/contact' ? 'text-white border-b-2 border-white pb-1 mt-1' : 'text-white/80 hover:text-white'
+              className={`text-base font-bold transition-colors ${
+                pathname === '/contact' ? 'text-white border-b-2 border-white pb-1.5 mt-1' : 'text-white/80 hover:text-white'
               }`}
             >
               İletişim
@@ -143,6 +178,18 @@ export default function NavbarClient({ categories, logo }: { categories: Categor
                 </span>
               )}
             </button>
+
+            {/* Ders Paneli Button */}
+            <a 
+              href={dersPaneliUrl || "https://atanis.ataniyorumhocam.com"} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-full transition-colors"
+            >
+              <GraduationCap className="w-4 h-4 text-primary-400" />
+              <span className="hidden sm:inline">Ders Paneli</span>
+              <span className="sm:hidden">Panel</span>
+            </a>
 
             {session ? (
               <div className="flex items-center gap-3">
@@ -174,19 +221,6 @@ export default function NavbarClient({ categories, logo }: { categories: Categor
         </div>
       </nav>
 
-      {/* Dynamic Apple Style Announcement Banner */}
-      {announcement && announcement.isActive && (
-        <div className="mt-16 bg-[#f5f5f7] py-3 px-4 text-center border-b border-gray-200">
-          <p className="text-xs sm:text-sm text-[#1d1d1f] font-semibold">
-            {announcement.text}
-            {announcement.linkText && (
-              <Link href={announcement.linkUrl || "/#courses"} className="text-primary-600 hover:underline ml-1 inline-flex items-center gap-1 font-bold">
-                {announcement.linkText} <span className="text-[11px]">⊕</span>
-              </Link>
-            )}
-          </p>
-        </div>
-      )}
     </>
   );
 }

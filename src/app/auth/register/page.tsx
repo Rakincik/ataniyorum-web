@@ -425,7 +425,7 @@ function RegisterContent() {
                   />
                 </div>
                 <p className="text-[11px] text-gray-500 font-medium ml-1">
-                  🔑 Canlı yayınlara ve paneline bu e-posta adresiyle giriş yapacaksınız.
+                  🔑 Öğrenci panelinize bu e-posta adresiyle giriş yapacaksınız.
                 </p>
               </div>
 

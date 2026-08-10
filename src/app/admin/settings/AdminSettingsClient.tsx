@@ -18,6 +18,7 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
   const [logo, setLogo] = useState<string>(initialSettings.logo || "");
   const [favicon, setFavicon] = useState<string>(initialSettings.favicon || "");
   const [siteTitle, setSiteTitle] = useState<string>(initialSettings.siteTitle || "Atanıyorum Hocam");
+  const [dersPaneliUrl, setDersPaneliUrl] = useState<string>(initialSettings.dersPaneliUrl || "https://atanis.ataniyorumhocam.com");
 
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -70,7 +71,8 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
           sliderAspectRatio,
           logo,
           favicon,
-          siteTitle
+          siteTitle,
+          dersPaneliUrl
         })
       });
 
@@ -187,6 +189,23 @@ export default function AdminSettingsClient({ initialSettings }: { initialSettin
           />
           <p className="text-xs text-gray-400">
             Tarayıcı sekmesinde ve arama motorlarında sitenizin başlığı olarak gösterilir.
+          </p>
+        </div>
+
+        {/* Ders Paneli Link */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+            Ders Paneli Bağlantısı (URL)
+          </label>
+          <input
+            type="url"
+            value={dersPaneliUrl}
+            onChange={(e) => setDersPaneliUrl(e.target.value)}
+            placeholder="Örn: https://atanis.ataniyorumhocam.com"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold text-gray-900 outline-none focus:border-primary-600"
+          />
+          <p className="text-xs text-gray-400">
+            Ana sayfada Giriş Yap butonu ile Sepet simgesi arasına yerleştirilen "Ders Paneli" butonunun yönlendireceği internet adresi.
           </p>
         </div>
 

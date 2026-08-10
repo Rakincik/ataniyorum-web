@@ -16,9 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {/* Sidebar (Server + Client Interaction) */}
       <aside className="w-64 bg-white text-gray-800 border-r border-gray-200 flex-shrink-0 min-h-screen flex flex-col fixed left-0 top-0 bottom-0 z-40 shadow-sm hidden md:flex">
         <div className="h-16 flex items-center px-6 border-b border-gray-100 shrink-0">
-          <span className="font-bold text-lg tracking-tight">
-            Atanıyorum <span className="text-primary-600">Panel</span>
-          </span>
+          <img src="/logo.png" alt="Atanıyorum Hocam Logo" className="h-10 w-auto object-contain" />
         </div>
         
         <div className="flex-grow overflow-y-auto py-2">

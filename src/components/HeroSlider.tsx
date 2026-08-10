@@ -21,6 +21,17 @@ type Slider = {
   imagePosition?: string;
 };
 
+const getSlideBgColor = (imagePath: string) => {
+  const lower = imagePath.toLowerCase();
+  if (lower.includes("slider2")) {
+    return "#0e0926"; // slider2.png'nin kenar koyu mor/lacivert rengi
+  }
+  if (lower.includes("slider1")) {
+    return "#ffffff"; // slider1.png'nin beyaz rengi
+  }
+  return "#ffffff"; // Varsayılan arka plan
+};
+
 export default function HeroSlider({ 
   sliders, 
   aspectRatio = "16:9" 
@@ -67,14 +78,17 @@ export default function HeroSlider({
   );
 
   const isBoxed = aspectRatio === "boxed";
-  const containerAspectClass = aspectRatio === "21:9" ? "aspect-[21/9]" : "aspect-[16/9]";
+  const containerAspectClass = (aspectRatio === "21:9" || isBoxed) ? "aspect-[1920/870]" : "aspect-[16/9]";
 
   const sliderContent = (
-    <div className={`relative w-full ${containerAspectClass} overflow-hidden bg-gray-100 group ${isBoxed ? "rounded-2xl md:rounded-[32px] border border-gray-100 shadow-md" : ""}`}>
+    <div 
+      className={`relative w-full ${containerAspectClass} overflow-hidden group ${isBoxed ? "rounded-2xl md:rounded-[32px] border border-gray-200/60 dark:border-white/10 shadow-[0_20px_40px_-5px_rgba(0,0,0,0.08)]" : ""}`}
+      style={{ backgroundColor: getSlideBgColor(currentSlider.image) }}
+    >
       <AnimatePresence initial={false} mode="wait">
         <motion.div
           key={currentIndex}
-          initial={{ opacity: 0, scale: 1.02 }}
+          initial={{ opacity: 0, scale: 1.01 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
@@ -87,7 +101,7 @@ export default function HeroSlider({
               fill
               className="transition-transform duration-500"
               style={{
-                objectFit: (currentSlider.imageFit || "cover") as any,
+                objectFit: "contain", // Görselin kırpılmasını önlemek için contain zorluyoruz
                 objectPosition: currentSlider.imagePosition || "center",
                 transform: `scale(${(currentSlider.imageZoom || 100) / 100})`
               }}
@@ -188,8 +202,8 @@ export default function HeroSlider({
 
   if (isBoxed) {
     return (
-      <div className="w-full bg-[#fbfbfd] pt-4 pb-6 md:pt-6 md:pb-8">
-        <div className="max-w-7xl mx-auto px-6">
+      <div className="w-full pt-1 pb-3 md:pt-2 md:pb-4">
+        <div className="max-w-[1500px] mx-auto px-6">
           {sliderContent}
         </div>
       </div>

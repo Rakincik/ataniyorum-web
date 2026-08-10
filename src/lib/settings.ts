@@ -29,6 +29,7 @@ export async function getSiteSettings() {
         logo: null,
         favicon: null,
         siteTitle: "Atanıyorum Hocam",
+        dersPaneliUrl: "https://atanis.ataniyorumhocam.com",
         updatedAt: new Date()
       };
     }
@@ -46,6 +47,7 @@ export async function getSiteSettings() {
       logo: null,
       favicon: null,
       siteTitle: "Atanıyorum Hocam",
+      dersPaneliUrl: "https://atanis.ataniyorumhocam.com",
       updatedAt: new Date()
     };
   }

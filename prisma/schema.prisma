@@ -270,5 +270,6 @@ model SiteSettings {
   logo              String?
   favicon           String?
   siteTitle         String?  @default("Atanıyorum Hocam")
+  dersPaneliUrl     String?  @default("https://atanis.ataniyorumhocam.com")
   updatedAt         DateTime @updatedAt
 }

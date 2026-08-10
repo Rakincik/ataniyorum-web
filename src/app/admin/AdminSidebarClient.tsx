@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { 
-  LayoutDashboard, Package, Tag, Users, ShoppingBag, 
-  ImageIcon, GraduationCap, ChevronDown, Layers 
+  LayoutDashboard, Tag, Users, ShoppingBag, 
+  ImageIcon, ChevronDown, Layers, GraduationCap 
 } from "lucide-react";
 
 type MenuSection = {
@@ -16,19 +16,10 @@ type MenuSection = {
 
 const menuSections: MenuSection[] = [
   {
-    title: "Katalog Yönetimi",
-    icon: Layers,
-    items: [
-      { label: "Kategoriler", href: "/admin/categories" },
-      { label: "Eğitimler", href: "/admin/products" },
-    ]
-  },
-  {
     title: "Satış & Pazarlama",
     icon: Tag,
     items: [
       { label: "Kuponlar", href: "/admin/coupons" },
-      { label: "Siparişler", href: "/admin/orders" },
     ]
   },
   {
@@ -48,11 +39,11 @@ const menuSections: MenuSection[] = [
 
 export default function AdminSidebarClient() {
   const pathname = usePathname();
-  // Varsayılan olarak Katalog Yönetimi açık gelsin (Eğer o route'taysak)
-  const [openSection, setOpenSection] = useState<string | null>("Katalog Yönetimi");
+  const [openSection, setOpenSection] = useState<string | null>(null);
 
   return (
     <nav className="flex-1 p-4 space-y-2">
+      {/* 1. Dashboard (Standalone) */}
       <Link 
         href="/admin" 
         className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
@@ -65,6 +56,62 @@ export default function AdminSidebarClient() {
         Dashboard
       </Link>
 
+      {/* 2. Öğrenciler (Standalone) */}
+      <Link 
+        href="/admin/users" 
+        className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+          pathname === "/admin/users" || pathname?.startsWith("/admin/users/")
+            ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
+            : "text-foreground/70 hover:bg-gray-100 dark:hover:bg-white/5"
+        }`}
+      >
+        <Users className="w-5 h-5" />
+        Öğrenciler
+      </Link>
+
+      {/* 3. Siparişler (Standalone) */}
+      <Link 
+        href="/admin/orders" 
+        className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+          pathname === "/admin/orders" || pathname?.startsWith("/admin/orders/")
+            ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
+            : "text-foreground/70 hover:bg-gray-100 dark:hover:bg-white/5"
+        }`}
+      >
+        <ShoppingBag className="w-5 h-5" />
+        Siparişler
+      </Link>
+
+      {/* 4. Eğitimler (Standalone) */}
+      <Link 
+        href="/admin/products" 
+        className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+          pathname === "/admin/products" || pathname?.startsWith("/admin/products/")
+            ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
+            : "text-foreground/70 hover:bg-gray-100 dark:hover:bg-white/5"
+        }`}
+      >
+        <GraduationCap className="w-5 h-5" />
+        Eğitimler
+      </Link>
+
+      {/* 5. Kategoriler (Standalone) */}
+      <Link 
+        href="/admin/categories" 
+        className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+          pathname === "/admin/categories" || pathname?.startsWith("/admin/categories/")
+            ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
+            : "text-foreground/70 hover:bg-gray-100 dark:hover:bg-white/5"
+        }`}
+      >
+        <Layers className="w-5 h-5" />
+        Kategoriler
+      </Link>
+
+      {/* Visual Separator */}
+      <div className="my-4 border-t border-gray-100 dark:border-white/5"></div>
+
+      {/* 6. Dropdowns (Kalanı Altta) */}
       {menuSections.map((section) => (
         <div key={section.title} className="pt-2">
           <button
@@ -104,20 +151,6 @@ export default function AdminSidebarClient() {
           </div>
         </div>
       ))}
-      
-      <div className="pt-2">
-        <Link 
-          href="/admin/users" 
-          className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
-            pathname === "/admin/users" 
-              ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
-              : "text-foreground/70 hover:bg-gray-100 dark:hover:bg-white/5"
-          }`}
-        >
-          <Users className="w-5 h-5" />
-          Öğrenciler
-        </Link>
-      </div>
     </nav>
   );
 }

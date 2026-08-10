@@ -26,6 +26,7 @@ export async function PUT(req: Request) {
         logo: data.logo || null,
         favicon: data.favicon || null,
         siteTitle: data.siteTitle || "Atanıyorum Hocam",
+        dersPaneliUrl: data.dersPaneliUrl || "https://atanis.ataniyorumhocam.com",
       },
       create: {
         id: "default",
@@ -37,6 +38,7 @@ export async function PUT(req: Request) {
         logo: data.logo || null,
         favicon: data.favicon || null,
         siteTitle: data.siteTitle || "Atanıyorum Hocam",
+        dersPaneliUrl: data.dersPaneliUrl || "https://atanis.ataniyorumhocam.com",
       }
     });
 

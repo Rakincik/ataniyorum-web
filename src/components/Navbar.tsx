@@ -8,5 +8,5 @@ export default async function Navbar() {
   });
   const settings = await getSiteSettings();
 
-  return <NavbarClient categories={categories} logo={settings?.logo} />;
+  return <NavbarClient categories={categories} logo={settings?.logo} dersPaneliUrl={settings?.dersPaneliUrl} />;
 }

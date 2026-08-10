@@ -2,8 +2,20 @@ import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/Navbar";
 import HeroSlider from "@/components/HeroSlider";
 import Link from "next/link";
-import { ArrowRight, Video, Book, CheckCircle2, Brain, Users, Target, Shield, GraduationCap, Zap } from "lucide-react";
+import { ArrowRight, Video, Book, CheckCircle2, Brain, Users, Target, Shield, GraduationCap, Zap, BookOpen, Compass, Trophy, HelpCircle } from "lucide-react";
 import { getSiteSettings } from "@/lib/settings";
+
+const getCategoryIcon = (slug: string) => {
+  const s = slug.toLowerCase();
+  if (s.includes("egitim") || s.includes("eğitim")) return <GraduationCap className="w-6 h-6" />;
+  if (s.includes("sinif") || s.includes("sınıf")) return <BookOpen className="w-6 h-6" />;
+  if (s.includes("okul") || s.includes("oncesi")) return <Brain className="w-6 h-6" />;
+  if (s.includes("turkce") || s.includes("türkçe") || s.includes("edebiyat")) return <BookOpen className="w-6 h-6" />;
+  if (s.includes("matematik") || s.includes("mat")) return <Compass className="w-6 h-6" />;
+  if (s.includes("pdr") || s.includes("rehberlik")) return <Trophy className="w-6 h-6" />;
+  if (s.includes("sosyal") || s.includes("tarih") || s.includes("cografya")) return <Compass className="w-6 h-6" />;
+  return <BookOpen className="w-6 h-6" />;
+};
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, sort?: string, page?: string }> }) {
   const { category, sort = "newest", page: pageStr = "1" } = await searchParams;
@@ -100,42 +112,46 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
       
       <HeroSlider sliders={sliders as any} aspectRatio={settings?.sliderAspectRatio || "16:9"} />
 
-      {/* İstatistikler & Güven Bandı */}
+      {/* İstatistikler & Güven Bandı (Yüzen Güven Bandı) */}
       {displayStats.length > 0 && (
-        <div className="bg-primary-700 text-white border-y border-white/10 relative z-10 shadow-lg">
-          <div className="max-w-7xl mx-auto px-6 py-4 md:py-6 flex flex-wrap items-center justify-center gap-6 md:gap-16 text-center">
-            {displayStats.map((stat, index) => (
-              <div key={stat.id} className="flex items-center gap-6 md:gap-16">
-                <div>
-                  <div className="text-2xl md:text-3xl font-black">{stat.value}</div>
-                  <div className="text-xs md:text-sm text-primary-100 font-medium uppercase tracking-wider">{stat.label}</div>
+        <div className="relative z-20 -mt-6 md:-mt-8 mb-12">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="bg-white/90 dark:bg-zinc-900/90 rounded-[2rem] shadow-xl border border-gray-100 dark:border-white/10 p-6 md:p-8 grid grid-cols-2 gap-6 md:flex md:flex-wrap md:justify-between items-center glass">
+              {displayStats.map((stat) => (
+                <div key={stat.id} className="flex items-center gap-4 group">
+                  <div className="w-1 h-10 bg-gradient-to-b from-primary-600 to-primary-400 dark:from-primary-400 dark:to-primary-600 rounded-full group-hover:scale-y-115 transition-transform duration-300"></div>
+                  <div>
+                    <div className="text-xl md:text-2xl font-black text-gray-900 dark:text-white leading-none mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                      {stat.value}
+                    </div>
+                    <div className="text-[10px] md:text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                      {stat.label}
+                    </div>
+                  </div>
                 </div>
-                {index < displayStats.length - 1 && (
-                  <div className="hidden md:block w-px h-8 bg-white/20"></div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}
 
       {/* Neden Biz? (Features) */}
       {siteFeatures.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 pt-24 pb-12">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Neden Atanıyorum Hocam?</h2>
-            <p className="text-foreground/60 text-lg max-w-2xl mx-auto">
+        <section className="max-w-7xl mx-auto px-6 pt-10 pb-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-4">Neden Atanıyorum Hocam?</h2>
+            <p className="text-foreground/60 text-lg max-w-2xl mx-auto font-medium">
               Sıradan bir dershane değil, tamamen senin başarına odaklanmış bir yapay zeka ve rehberlik ekosistemi.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {siteFeatures.map((feature) => (
-              <div key={feature.id} className="glass p-8 rounded-3xl text-center flex flex-col items-center shadow-sm hover:shadow-apple-hover transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-white/5">
-                <div className="w-16 h-16 bg-primary-50 dark:bg-primary-900/50 rounded-2xl flex items-center justify-center mb-6">
+              <div key={feature.id} className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] text-center flex flex-col items-center shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.08)] transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-200/60 dark:border-white/10">
+                <div className="w-14 h-14 bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 rounded-2xl flex items-center justify-center mb-6">
                   {getIcon(feature.icon)}
                 </div>
-                <h3 className="font-bold text-xl mb-3">{feature.title}</h3>
-                <p className="text-foreground/60 leading-relaxed">
+                <h3 className="font-extrabold text-xl text-gray-900 dark:text-white mb-3">{feature.title}</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed font-medium">
                   {feature.description}
                 </p>
               </div>
@@ -144,48 +160,58 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
       )}
 
-      {/* Öne Çıkan Kategoriler (Featured Categories) */}
+      {/* Öne Çıkan Kategoriler (Featured Categories - Gri Arka Planlı Akış) */}
       {featuredCategories.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 py-12">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Senin Alanın Hangisi?</h2>
-            <p className="text-foreground/60 text-lg max-w-2xl mx-auto">
-              Branşını seç ve sana özel hazırlanmış en kapsamlı içeriklere anında ulaş.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredCategories.map((fc) => (
-              <Link 
-                href={`/?category=${fc.slug}#courses`} 
-                key={fc.id}
-                className="group relative h-[300px] md:h-[400px] rounded-3xl overflow-hidden flex flex-col justify-end p-8 shadow-sm hover:shadow-apple-hover transition-all duration-300 transform hover:-translate-y-1"
-                style={{ backgroundColor: fc.color || '#102a43' }}
-              >
-                {fc.image && (
-                  <div className="absolute inset-0 z-0">
-                    <img src={fc.image} alt={fc.name} className="w-full h-full object-cover opacity-50 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-                  </div>
-                )}
-                <div className="relative z-10 text-white">
-                  <h3 className="text-2xl md:text-3xl font-black mb-2">{fc.name}</h3>
-                  {fc.description && (
-                    <p className="text-white/80 line-clamp-2 text-sm md:text-base mb-6">
-                      {fc.description}
-                    </p>
-                  )}
-                  <div className="inline-flex items-center gap-2 font-medium text-primary-300 group-hover:text-white transition-colors">
-                    Paketleri İncele <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <div className="w-full bg-[#f8fafc] dark:bg-[#0c162d] border-y border-gray-200/50 dark:border-white/5 py-10 md:py-12">
+          <section className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-4">Senin Alanın Hangisi?</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto font-medium">
+                Branşını seç ve sana özel hazırlanmış en kapsamlı içeriklere anında ulaş.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {featuredCategories.map((fc) => {
+                const IconComponent = getCategoryIcon(fc.slug);
+                return (
+                  <Link 
+                    href={`/?category=${fc.slug}#courses`} 
+                    key={fc.id}
+                    className="group relative bg-white dark:bg-[#0f1d3a] border border-gray-200/60 dark:border-white/10 p-6 rounded-2xl transition-all duration-300 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1.5 overflow-hidden flex flex-col justify-between h-full"
+                  >
+                    {/* Uniform Brand Red Glow Effect */}
+                    <div className="absolute -right-8 -top-8 w-24 h-24 rounded-full blur-2xl bg-red-500/10 group-hover:bg-red-500/20 transition-all duration-500 select-none pointer-events-none"></div>
+
+                    <div className="relative z-10 flex flex-col h-full justify-between">
+                      <div>
+                        {/* Uniform Brand Red Icon Container */}
+                        <div className="w-12 h-12 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 rounded-xl flex items-center justify-center mb-4 shadow-sm group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
+                          {IconComponent}
+                        </div>
+
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                          {fc.name}
+                        </h3>
+                        
+                        <p className="text-gray-500 dark:text-gray-400 text-xs md:text-sm leading-relaxed mb-4 line-clamp-2 font-medium">
+                          {fc.description || `${fc.name} branşına özel ÖABT hazırlık paketleri ve sınav koçluğu.`}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center text-xs font-bold text-red-600 dark:text-red-400 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors pt-2">
+                        Programı İncele <ArrowRight className="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:translate-x-1.5" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        </div>
       )}
       
       {/* Vitrin (Storefront) */}
-      <section id="courses" className="max-w-7xl mx-auto px-6 pt-16 lg:pt-24 pb-12">
+      <section id="courses" className="max-w-7xl mx-auto px-6 pt-8 lg:pt-10 pb-12">
         <div className="mb-10">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             Eğitim Programları
